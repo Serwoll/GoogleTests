@@ -3,19 +3,27 @@ package Search;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
+
 public class GooglePage {
 
-    private Page page;
+    private final Page page;
+    private final Locator searchInput;
+    private final Locator searchBtn;
+    private final Locator googleLogo;
+    private final Locator searchResults;
+    private final Locator pageWithResults;
+    private final Locator clearBtn;
 
-    private final Locator searchInput = page.locator("[name='q']");
-    private final Locator searchBtn = page.locator("[name='btnK']");
-    private final Locator googleLogo = page.locator("img[alt='Google']");
-    private final Locator searchResults = page.locator("a h3");
-    private final Locator pageWithResults = page.locator("td a");
-    private final Locator clearBtn = page.locator("[aria-label='Очистить']");
 
     public GooglePage(Page page) {
         this.page = page;
+        this.searchInput = page.locator("[name='q']");
+        this.searchBtn = page.locator("[name='btnK']").first();
+        this.googleLogo = page.locator("[id='logo']>svg");
+        this.searchResults = page.locator("a h3");
+        this.pageWithResults = page.locator("td a");
+        this.clearBtn = page.locator("[aria-label='Очистить']");
     }
 
     public void navigate() {
@@ -28,6 +36,8 @@ public class GooglePage {
 
     public void pressSearchBtn() {
         searchBtn.click();
+        page.waitForLoadState(DOMCONTENTLOADED);
+
     }
 
     public boolean isGoogleLogo() {
@@ -35,6 +45,7 @@ public class GooglePage {
     }
 
     public boolean hasSearchResult() {
+
         return searchResults.count() > 0;
     }
 
@@ -46,9 +57,9 @@ public class GooglePage {
         return clearBtn.isVisible();
     }
 
-    public boolean IsCleanSearchText() {
+    public boolean isCleanSearchText() {
         clearBtn.click();
-        return searchInput.inputValue().isEmpty();
+        return clearBtn.isHidden();
     }
 
 

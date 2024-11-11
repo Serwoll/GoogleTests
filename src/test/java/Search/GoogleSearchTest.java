@@ -1,16 +1,13 @@
 package Search;
 
 import com.microsoft.playwright.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GoogleSearchTest {
     private static Playwright playwright;
-    private Browser browser;
+    private static Browser browser;
     private BrowserContext context;
     private Page page;
     private GooglePage googlePage;
@@ -30,6 +27,18 @@ public class GoogleSearchTest {
         googlePage = new GooglePage(page);
     }
 
+    @AfterEach
+    public void tearDown() {
+        if (page != null) page.close();
+        if (context != null) context.close();
+    }
+
+    @AfterAll
+    public static void tearDownClass() {
+        if (browser != null) browser.close();
+        if (playwright != null) playwright.close();
+    }
+
     @Test
     @DisplayName("Тестирование поиска в Google")
     public void testGoogleMainTab() {
@@ -41,7 +50,7 @@ public class GoogleSearchTest {
         assertTrue(googlePage.hasSearchResult());
         assertTrue(googlePage.hasSearchPages());
         assertTrue(googlePage.isClearBtn());
-        assertTrue(googlePage.IsCleanSearchText());
+        assertTrue(googlePage.isCleanSearchText());
     }
 
 
